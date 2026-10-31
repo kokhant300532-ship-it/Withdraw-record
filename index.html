@@ -194,7 +194,7 @@
                 <div class="flex items-center space-x-3">
                     <div class="flex items-center space-x-2 bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-700 shadow-xs">
                         <i class="fa-regular fa-calendar text-slate-400"></i>
-                        <span>25/10/2026 - 25/10/2026</span>
+                        <span x-text="customDateRange"></span>
                         <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
                     </div>
 
@@ -239,7 +239,7 @@
                 </div>
             </div>
 
-            <!-- DATA TABLE CONTAINER (Plataforma ကော်လံ ဖယ်ရှားပြီး) -->
+            <!-- DATA TABLE CONTAINER -->
             <div class="bg-white rounded-xl border border-slate-200 shadow-xs flex-1 flex flex-col overflow-hidden">
                 <div class="overflow-x-auto custom-scrollbar flex-1">
                     <table class="w-full text-left border-collapse min-w-[1000px]">
@@ -382,6 +382,19 @@
                         </div>
                     </div>
 
+                    <!-- SECTION 0.5: DATE RANGE CONTROL -->
+                    <div class="bg-purple-50/60 p-4 rounded-xl border border-purple-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-xs font-bold text-slate-800 uppercase tracking-wide">
+                                <i class="fa-regular fa-calendar text-purple-600 mr-1"></i> Rango de Fecha (Date)
+                            </label>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-500 mb-1">Fecha a mostrar (ej. 25/10/2026 - 25/10/2026)</label>
+                            <input type="text" x-model="customDateRange" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded focus:ring-2 focus:ring-purple-500 bg-white font-medium">
+                        </div>
+                    </div>
+
                     <!-- SECTION 1: LINE / ROW COUNT CONTROLLER -->
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <div class="flex items-center justify-between mb-2">
@@ -453,7 +466,6 @@
                                 <input type="text" x-model="editForm.banco" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
                             </div>
 
-                            <!-- ငွေပေးချေမှုပုံစံရွေးချယ်စရာနှစ်ခု (Pago sin conexión နှင့် Pago en línea) -->
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tipo de Pago (Live Control Setting)</label>
                                 <select x-model="editForm.tipoPago" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
@@ -524,6 +536,7 @@
                 searchQuery: '',
                 visibleRowCount: 13,
                 customLogo: null,
+                customDateRange: '25/10/2026 - 25/10/2026',
                 
                 kpiOverride: {
                     totalTrans: null,
