@@ -479,7 +479,6 @@
                                 <input type="text" x-model="editForm.tarjeta" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
                             </div>
 
-                            <!-- ဇယားကွက်အတွင်း တစ်ခုချင်းစီ၏ နေ့စွဲနှင့်အချိန် (Hora de procesamiento) ကိုပါ ပြင်ဆင်ရန် -->
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Hora de Procesamiento (နေ့စွဲနှင့် အချိန်)</label>
                                 <input type="text" x-model="editForm.hora" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white font-mono">
@@ -544,19 +543,36 @@
             return `${day}/${month}/${year}`;
         }
 
-        function getTodayDateTime(offsetMinutes = 0) {
-            const now = new Date(Date.now() - offsetMinutes * 60 * 1000);
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
+        function formatDateObject(d) {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            const seconds = String(d.getSeconds()).padStart(2, '0');
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+
+        function generateTimeSequence(count) {
+            // ပထမဆုံးလိုင်း (Top row) အတွက် လက်ရှိအချိန်ထက် မိနစ် ၃၀ နှုတ်ထားခြင်း
+            let currentTime = new Date(Date.now() - 30 * 60 * 1000);
+            
+            // ၃ မိနစ် သို့မဟုတ် ၅ မိနစ်စီ အလှည့်ကျ လျှော့ချမည့် ပုံစံများ
+            const minuteGaps = [3, 4, 3, 5, 3, 4, 3, 5, 3, 4, 3, 5, 3];
+            
+            const times = [];
+            for (let i = 0; i < count; i++) {
+                times.push(formatDateObject(currentTime));
+                const gap = minuteGaps[i % minuteGaps.length];
+                currentTime = new Date(currentTime.getTime() - gap * 60 * 1000);
+            }
+            return times;
         }
 
         function dashboardApp() {
             const todayStr = getTodayFormatted();
+            const initialTimes = generateTimeSequence(13);
+
             return {
                 isDrawerOpen: false,
                 searchQuery: '',
@@ -580,24 +596,24 @@
                     banco: '',
                     tipoPago: 'Pago en línea',
                     nombre: '',
-                    hora: getTodayDateTime(0),
+                    hora: formatDateObject(new Date(Date.now() - 30 * 60 * 1000)),
                     estado: 'Aprobado'
                 },
 
                 items: [
-                    { id: 1, cuenta: '665113256...', pedido: 'OD_17929433581262...', importe: 2525873.64, tarjeta: '41523144319857...', banco: 'BBVA BANCO...', tipoPago: 'Pago en línea', nombre: '888888888', hora: getTodayDateTime(2), estado: 'Aprobado' },
-                    { id: 2, cuenta: '56532823...', pedido: 'OD_17929433581094...', importe: 879.61, tarjeta: '722969001734487...', banco: 'Mercado Pag...', tipoPago: 'Pago en línea', nombre: 'Araceli Garcia Landero', hora: getTodayDateTime(3), estado: 'Aprobado' },
-                    { id: 3, cuenta: '3345668...', pedido: 'OD_1792943366582...', importe: 56434.94, tarjeta: '4169160883173...', banco: 'BANCOPPEL', tipoPago: 'Pago en línea', nombre: 'Jorge Flores', hora: getTodayDateTime(4), estado: 'Aprobado' },
-                    { id: 4, cuenta: '5577296...', pedido: 'OD_1792943365447...', importe: 3641.69, tarjeta: '40276600840542...', banco: 'AZTECA', tipoPago: 'Pago en línea', nombre: 'Miguel Angel Zapeda', hora: getTodayDateTime(5), estado: 'Aprobado' },
-                    { id: 5, cuenta: '11111111111...', pedido: 'OD_1792943365278...', importe: 236.69, tarjeta: '012 180 01528697...', banco: 'BBVA BANCO...', tipoPago: 'Pago en línea', nombre: 'Lucero Guadalupe He', hora: getTodayDateTime(6), estado: 'Aprobado' },
-                    { id: 6, cuenta: '9614613...', pedido: 'OD_1792943311902...', importe: 2846.25, tarjeta: '4189143396016...', banco: 'BANORTE', tipoPago: 'Pago en línea', nombre: 'Carolina Yañez Gardu', hora: getTodayDateTime(7), estado: 'Aprobado' },
-                    { id: 7, cuenta: '27219958...', pedido: 'OD_1792943311750...', importe: 1587.30, tarjeta: '63818000016950...', banco: 'NUBANK', tipoPago: 'Pago en línea', nombre: 'Karla Giovanna Saucu', hora: getTodayDateTime(9), estado: 'Aprobado' },
-                    { id: 8, cuenta: '99318885...', pedido: 'OD_1792943311334...', importe: 8964.64, tarjeta: '5579100463712...', banco: 'SANTANDER', tipoPago: 'Pago en línea', nombre: 'Jorge Flores', hora: getTodayDateTime(10), estado: 'Aprobado' },
-                    { id: 9, cuenta: '222712...', pedido: 'OD_1792943311142...', importe: 78436.64, tarjeta: '072705011269...', banco: 'BANORTE', tipoPago: 'Pago en línea', nombre: 'Zurisadai Anastacio V', hora: getTodayDateTime(11), estado: 'En revisión' },
-                    { id: 10, cuenta: '99847772...', pedido: 'OD_1792943310974...', importe: 9647.52, tarjeta: '72296901037184...', banco: 'Mercado Pag...', tipoPago: 'Pago en línea', nombre: 'José Alfredo Calzada I', hora: getTodayDateTime(12), estado: 'Pago fallido' },
-                    { id: 11, cuenta: '33203284...', pedido: 'OD_1792943310798...', importe: 4144.89, tarjeta: '45724902008371...', banco: 'COMPARTA', tipoPago: 'Pago en línea', nombre: 'Karina Galmiche Fiore', hora: getTodayDateTime(13), estado: 'Aprobado' },
-                    { id: 12, cuenta: '9618272...', pedido: 'OD_1792943310630...', importe: 25064.01, tarjeta: '13762010162554...', banco: 'BANCOPPEL', tipoPago: 'Pago en línea', nombre: 'Jesus Manuel Osorio', hora: getTodayDateTime(14), estado: 'Aprobado' },
-                    { id: 13, cuenta: '9611137...', pedido: 'OD_1792943310446...', importe: 544.04, tarjeta: '012180015517292...', banco: 'BBVA BANCO...', tipoPago: 'Pago en línea', nombre: 'Oscar Ivan', hora: getTodayDateTime(15), estado: 'Aprobado' }
+                    { id: 1, cuenta: '665113256...', pedido: 'OD_17929433581262...', importe: 2525873.64, tarjeta: '41523144319857...', banco: 'BBVA BANCO...', tipoPago: 'Pago en línea', nombre: '888888888', hora: initialTimes[0], estado: 'Aprobado' },
+                    { id: 2, cuenta: '56532823...', pedido: 'OD_17929433581094...', importe: 879.61, tarjeta: '722969001734487...', banco: 'Mercado Pag...', tipoPago: 'Pago en línea', nombre: 'Araceli Garcia Landero', hora: initialTimes[1], estado: 'Aprobado' },
+                    { id: 3, cuenta: '3345668...', pedido: 'OD_1792943366582...', importe: 56434.94, tarjeta: '4169160883173...', banco: 'BANCOPPEL', tipoPago: 'Pago en línea', nombre: 'Jorge Flores', hora: initialTimes[2], estado: 'Aprobado' },
+                    { id: 4, cuenta: '5577296...', pedido: 'OD_1792943365447...', importe: 3641.69, tarjeta: '40276600840542...', banco: 'AZTECA', tipoPago: 'Pago en línea', nombre: 'Miguel Angel Zapeda', hora: initialTimes[3], estado: 'Aprobado' },
+                    { id: 5, cuenta: '11111111111...', pedido: 'OD_1792943365278...', importe: 236.69, tarjeta: '012 180 01528697...', banco: 'BBVA BANCO...', tipoPago: 'Pago en línea', nombre: 'Lucero Guadalupe He', hora: initialTimes[4], estado: 'Aprobado' },
+                    { id: 6, cuenta: '9614613...', pedido: 'OD_1792943311902...', importe: 2846.25, tarjeta: '4189143396016...', banco: 'BANORTE', tipoPago: 'Pago en línea', nombre: 'Carolina Yañez Gardu', hora: initialTimes[5], estado: 'Aprobado' },
+                    { id: 7, cuenta: '27219958...', pedido: 'OD_1792943311750...', importe: 1587.30, tarjeta: '63818000016950...', banco: 'NUBANK', tipoPago: 'Pago en línea', nombre: 'Karla Giovanna Saucu', hora: initialTimes[6], estado: 'Aprobado' },
+                    { id: 8, cuenta: '99318885...', pedido: 'OD_1792943311334...', importe: 8964.64, tarjeta: '5579100463712...', banco: 'SANTANDER', tipoPago: 'Pago en línea', nombre: 'Jorge Flores', hora: initialTimes[7], estado: 'Aprobado' },
+                    { id: 9, cuenta: '222712...', pedido: 'OD_1792943311142...', importe: 78436.64, tarjeta: '072705011269...', banco: 'BANORTE', tipoPago: 'Pago en línea', nombre: 'Zurisadai Anastacio V', hora: initialTimes[8], estado: 'En revisión' },
+                    { id: 10, cuenta: '99847772...', pedido: 'OD_1792943310974...', importe: 9647.52, tarjeta: '72296901037184...', banco: 'Mercado Pag...', tipoPago: 'Pago en línea', nombre: 'José Alfredo Calzada I', hora: initialTimes[9], estado: 'Pago fallido' },
+                    { id: 11, cuenta: '33203284...', pedido: 'OD_1792943310798...', importe: 4144.89, tarjeta: '45724902008371...', banco: 'COMPARTA', tipoPago: 'Pago en línea', nombre: 'Karina Galmiche Fiore', hora: initialTimes[10], estado: 'Aprobado' },
+                    { id: 12, cuenta: '9618272...', pedido: 'OD_1792943310630...', importe: 25064.01, tarjeta: '13762010162554...', banco: 'BANCOPPEL', tipoPago: 'Pago en línea', nombre: 'Jesus Manuel Osorio', hora: initialTimes[11], estado: 'Aprobado' },
+                    { id: 13, cuenta: '9611137...', pedido: 'OD_1792943310446...', importe: 544.04, tarjeta: '012180015517292...', banco: 'BBVA BANCO...', tipoPago: 'Pago en línea', nombre: 'Oscar Ivan', hora: initialTimes[12], estado: 'Aprobado' }
                 ],
 
                 uploadLogo(event) {
@@ -646,7 +662,12 @@
                     const newItem = JSON.parse(JSON.stringify(lastItem));
                     newItem.id = Date.now();
                     newItem.pedido = 'OD_' + Math.floor(Math.random() * 8999999999 + 1000000000);
-                    newItem.hora = getTodayDateTime(0);
+
+                    // နောက်ဆုံးလိုင်းထက် ၃ မိနစ် နှုတ်ထားသော အချိန် တွက်ပေးခြင်း
+                    const lastTime = new Date(lastItem.hora.replace(/-/g, '/'));
+                    const newTime = new Date(lastTime.getTime() - 3 * 60 * 1000);
+                    newItem.hora = formatDateObject(newTime);
+
                     this.items.push(newItem);
                     this.visibleRowCount = this.items.length;
                 },
@@ -711,7 +732,7 @@
                         banco: 'BBVA BANCO...',
                         tipoPago: 'Pago en línea',
                         nombre: '',
-                        hora: getTodayDateTime(0),
+                        hora: formatDateObject(new Date(Date.now() - 30 * 60 * 1000)),
                         estado: 'Aprobado'
                     };
                 },
